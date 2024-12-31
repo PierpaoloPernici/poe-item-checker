@@ -148,7 +148,7 @@ export default function ItemChecker({ league }: ItemCheckerProps) {
           .filter((filter): filter is NonNullable<typeof filter> => filter !== null);
 
         if (statFilters.length === 0) {
-          setError('No valid stats found to search for');
+          setError('Nessuna statistica valida trovata, controlla il testo');
           setLoading(false);
           return;
         }
@@ -200,7 +200,7 @@ export default function ItemChecker({ league }: ItemCheckerProps) {
       if (!response.ok) {
         const errorData = await response.json();
         if (response.status === 429) {
-          throw new Error('Too many requests. Please wait a moment and try again.');
+          throw new Error('Troppe richieste. Attendi un attimo e riprova.');
         }
         throw new Error(errorData.error || 'Search failed');
       }
@@ -210,11 +210,11 @@ export default function ItemChecker({ league }: ItemCheckerProps) {
       if (data.id) {
         window.open(`https://www.pathofexile.com/trade2/search/${league}/${data.id}`, '_blank');
       } else {
-        throw new Error('No search ID returned');
+        throw new Error('Nessun ID di ricerca restituito');
       }
     } catch (error) {
-      setError(error instanceof Error ? error.message : 'An error occurred');
-      console.error('Search error:', error);
+      setError(error instanceof Error ? error.message : 'Si è verificato un errore');
+      console.error('Errore di ricerca:', error);
     } finally {
       setLoading(false);
     }
@@ -285,7 +285,7 @@ export default function ItemChecker({ league }: ItemCheckerProps) {
 
       <div className="flex items-center justify-center gap-3 text-white/80">
         <label htmlFor="includeItemLevel" className="text-sm select-none">
-          Include item level in search
+          Includi livello item nella ricerca
         </label>
         <button
           role="switch"
@@ -325,10 +325,10 @@ export default function ItemChecker({ league }: ItemCheckerProps) {
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
               </svg>
-              Searching...
+              Ricerca...
             </span>
           ) : (
-            'Search on PoE Trade'
+            'Cerca su PoE Trade'
           )}
         </div>
       </button>

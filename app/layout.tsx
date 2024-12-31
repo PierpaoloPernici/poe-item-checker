@@ -4,22 +4,22 @@ import "./globals.css";
 import { Analytics } from '@vercel/analytics/react';
 
 export const metadata: Metadata = {
-  title: "PoE2 Item Checker | Fast Path of Exile Price Checking Tool",
-  description: "Instantly check Path of Exile 2 item prices with our advanced item parser. Compare prices on the official trade site with just one paste. Free, fast, and accurate.",
+  title: "PoE2 Italia Item Checker | Path of Exile 2",
+  description: "Controlla subito i prezzi degli item di Path of Exile 2. Confronta i prezzi sul sito ufficiale con un solo click. Gratuito, veloce e preciso!",
   keywords: "Path of Exile 2, PoE2, item price checker, PoE trade, item pricing tool, Path of Exile trading",
-  authors: [{ name: "Pewpewlazer" }],
-  metadataBase: new URL('https://poe-item-check.vercel.app'),
+  authors: [{ name: "PieR" }],
+  metadataBase: new URL('https://poe2.pcube.io'),
   openGraph: {
-    title: "PoE2 Item Checker | Fast Path of Exile Price Checking Tool",
-    description: "Instantly check Path of Exile 2 item prices with our advanced item parser. Free, fast, and accurate.",
+    title: "PoE2 Italia Item Checker | Path of Exile 2",
+    description: "Controlla subito i prezzi degli item di Path of Exile 2. Confronta i prezzi sul sito ufficiale con un solo click. Gratuito, veloce e preciso!",
     type: "website",
-    locale: "en_US",
-    siteName: "PoE2 Item Checker"
+    locale: "it_IT",
+    siteName: "PoE2 Italia Item Checker"
   },
   twitter: {
     card: "summary_large_image",
-    title: "PoE2 Item Checker | Fast Path of Exile Price Checking Tool",
-    description: "Instantly check Path of Exile 2 item prices with our advanced item parser. Free, fast, and accurate."
+    title: "PoE2 Italia Item Checker | Path of Exile 2",
+    description: "Controlla subito i prezzi degli item di Path of Exile 2. Confronta i prezzi sul sito ufficiale con un solo click. Gratuito, veloce e preciso!"
   },
   robots: {
     index: true,

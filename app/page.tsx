@@ -2,56 +2,51 @@
 import React, { useState } from 'react';
 import ItemChecker from '@/app/components/ItemChecker';
 import LeagueSelector from '@/app/components/LeagueSelector';
-
 export default function Home() {
   const [selectedLeague, setSelectedLeague] = useState('Standard');
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-950 to-slate-900 p-8">
       <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))] opacity-20" />
-
       <main className="relative max-w-2xl mx-auto space-y-8">
         <div className="space-y-4 text-center">
-          <h1 className="text-6xl font-black bg-gradient-to-r from-blue-400 via-blue-500 to-cyan-400 bg-clip-text text-transparent drop-shadow-lg">
-            Pewpewlazer&apos;s
+          <h1 className="text-6xl font-black drop-shadow-lg">
+          <span className="bg-gradient-to-r from-green-600 via-white to-red-600 bg-clip-text text-transparent">
+              POE2 Italia
+          </span>
           </h1>
           <p className="text-2xl font-medium text-white/80">
-            PoE2 Item Checker
+            Item Checker
           </p>
           <div className="h-[1px] w-24 mx-auto bg-gradient-to-r from-transparent via-blue-400 to-transparent" />
         </div>
-
         <LeagueSelector
           selectedLeague={selectedLeague}
           onLeagueChange={setSelectedLeague}
         />
-
         <ItemChecker league={selectedLeague} />
-
         <div className="backdrop-blur-sm bg-white/5 rounded-xl p-6 space-y-4">
           <div className="space-y-3">
-            <h2 className="text-lg font-medium text-white/90 text-center">How to Use</h2>
+            <h2 className="text-lg font-medium text-white/90 text-center">Come usare il checker</h2>
             <ol className="text-white/70 space-y-2 list-decimal list-inside">
               <li className="flex items-center gap-2">
                 <span className="text-cyan-400">1.</span>
-                Copy an item from Path of Exile (Ctrl+C while hovering over an item)
+                Copia un oggetto da Path of Exile (Ctrl+C mentre passi il mouse sopra un oggetto)
               </li>
               <li className="flex items-center gap-2">
                 <span className="text-cyan-400">2.</span>
-                Paste it into the item checker textbox below
+                Incollalo nella casella di testo del controllo oggetti qui sopra
               </li>
               <li className="flex items-center gap-2">
                 <span className="text-cyan-400">3.</span>
-                Toggle whether you want to include item level in the search
+                Attiva o disattiva se vuoi includere il livello dell'oggetto nella ricerca
               </li>
               <li className="flex items-center gap-2">
                 <span className="text-cyan-400">4.</span>
-                Click "Search on PoE Trade" to open the official trade site
+                Clicca su "Cerca su PoE Trade" per aprire il sito ufficiale di scambio
               </li>
             </ol>
           </div>
         </div>
-
         <footer className="text-center">
           <a
             href="https://github.com/sanzodown/poe-item-checker"
@@ -62,7 +57,7 @@ export default function Home() {
             <svg height="24" width="24" viewBox="0 0 16 16" className="fill-current">
               <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
             </svg>
-            <span>View on GitHub</span>
+            <span>basato su Pewpewlazer Item Checker</span>
           </a>
         </footer>
       </main>
