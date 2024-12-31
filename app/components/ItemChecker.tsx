@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
+import ReactGA from 'react-ga4';
 import { fetchStats, findStatId, extractValue, StatOption } from '../utils/stats';
 import { ITEM_CLASS_MAP } from '../constants/itemTypes';
 import type { ParsedItem } from '../types/item';
@@ -208,6 +209,12 @@ export default function ItemChecker({ league }: ItemCheckerProps) {
       const data = await response.json();
 
       if (data.id) {
+        ReactGA.event({
+          category: 'Search',
+          action: 'PoeTradeSearch',
+          label: league,
+          value: parsedItem.itemLevel || 0
+        });
         window.open(`https://www.pathofexile.com/trade2/search/${league}/${data.id}`, '_blank');
       } else {
         throw new Error('Nessun ID di ricerca restituito');
