@@ -3,12 +3,152 @@ import React, { useState, useEffect } from 'react';
 import ReactGA from 'react-ga4';
 import ItemChecker from '@/app/components/ItemChecker';
 import LeagueSelector from '@/app/components/LeagueSelector';
+
+function CookieBanner() {
+  const [showBanner, setShowBanner] = useState(true);
+
+  // Funzione per riaprire il banner
+  const handleReopenBanner = () => {
+    setShowBanner(true);
+  };
+  
+  // Initialize preferences state
+  const [preferences, setPreferences] = useState({
+    necessary: true, // Always true
+    analytics: true
+  });
+
+  useEffect(() => {
+    const consent = localStorage.getItem('cookieConsent');
+    if (consent) {
+      const savedPreferences = JSON.parse(consent);
+      setPreferences(savedPreferences);
+      setShowBanner(false); // Nascondi il banner se c'è già un consenso salvato
+      
+      if (savedPreferences.analytics) {
+        initializeAnalytics();
+      }
+    }
+  }, []);
+
+  const initializeAnalytics = () => {
+    ReactGA.initialize(process.env.NEXT_PUBLIC_GA_TRACKING_ID || 'G-XXXXXXXXXX');
+    ReactGA.send({ hitType: "pageview", page: window.location.pathname + window.location.search });
+  };
+
+  const handleSave = () => {
+    // Crea un nuovo oggetto con le preferenze aggiornate
+    const newPreferences = {
+      ...preferences,
+      necessary: true, // Assicura che i cookie necessari siano sempre attivi
+      analytics: preferences.analytics
+    };
+    
+    // Salva le preferenze nel localStorage
+    localStorage.setItem('cookieConsent', JSON.stringify(newPreferences));
+    
+    // Inizializza analytics se necessario
+    if (newPreferences.analytics) {
+      initializeAnalytics();
+    }
+    
+    // Aggiorna lo stato e chiudi il banner
+    setPreferences(newPreferences);
+    setShowBanner(false);
+  };
+
+  return (
+    <>
+      {!showBanner && (
+        <button
+          onClick={handleReopenBanner}
+          className="fixed bottom-4 right-4 bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-full shadow-lg transition-all duration-300 ease-in-out animate-fade-in"
+          title="Impostazioni Cookie"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M12 2a10 10 0 1 0 10 10 4 4 0 0 1-5-5 4 4 0 0 1-5-5" />
+            <path d="M8.5 8.5v.01" />
+            <path d="M16 15.5v.01" />
+            <path d="M12 12v.01" />
+          </svg>
+        </button>
+      )}
+      <div
+        className={`fixed bottom-4 right-4 bg-white/10 backdrop-blur-sm rounded-lg p-4 max-w-md border border-white/10 transition-all duration-300 ease-in-out transform ${
+          showBanner
+            ? 'opacity-100 translate-y-0'
+            : 'opacity-0 translate-y-8 pointer-events-none'
+        }`}
+      >
+      <h3 className="text-white font-medium mb-2">Impostazioni Privacy</h3>
+      <p className="text-white/80 text-sm mb-4">
+        Utilizziamo Google Analytics per monitorare il traffico del sito. I cookie necessari invece sono sempre attivi. 
+        Puoi scegliere se accettare i cookie analytics per aiutarci a migliorare il sito.
+      </p>
+      
+      <div className="space-y-2 mb-4">
+        <label className="flex items-center text-white/80">
+          <input
+            type="checkbox"
+            checked={preferences.necessary}
+            disabled
+            className="mr-2"
+          />
+          Cookie necessari
+        </label>
+        
+        <label className="flex items-center text-white/80">
+          <input
+            type="checkbox"
+            checked={preferences.analytics}
+            onChange={(e) => setPreferences(prev => ({
+              ...prev,
+              analytics: e.target.checked
+            }))}
+            className="mr-2"
+          />
+          Cookie analytics
+        </label>
+      </div>
+
+      <div className="flex gap-2">
+        <button
+          onClick={handleSave}
+          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium"
+        >
+          Salva preferenze
+        </button>
+        {/* <a
+          href="/privacy-policy"
+          className="text-white/80 text-sm hover:text-white"
+        >
+          Privacy Policy
+        </a> */}
+      </div>
+    </div>
+   </>
+  );
+}
+
 export default function Home() {
   const [selectedLeague, setSelectedLeague] = useState('Standard');
 
   useEffect(() => {
-    ReactGA.initialize(process.env.NEXT_PUBLIC_GA_TRACKING_ID || 'G-XXXXXXXXXX'); // Replace with your tracking ID
-    ReactGA.send({ hitType: "pageview", page: window.location.pathname + window.location.search });
+    const hasConsent = localStorage.getItem('cookieConsent');
+    if (hasConsent) {
+      ReactGA.initialize(process.env.NEXT_PUBLIC_GA_TRACKING_ID || 'G-XXXXXXXXXX');
+      ReactGA.send({ hitType: "pageview", page: window.location.pathname + window.location.search });
+    }
   }, []);
 
   return (
@@ -54,6 +194,7 @@ export default function Home() {
             </ol>
           </div>
         </div>
+        <CookieBanner />
         <footer className="text-center">
           <a
             href="https://github.com/sanzodown/poe-item-checker"
