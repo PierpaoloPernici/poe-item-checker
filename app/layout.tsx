@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { GeistSans, GeistMono } from "geist/font";
 import "./globals.css";
-import { Analytics } from '@vercel/analytics/react';
 
 export const metadata: Metadata = {
   title: "PoE2 Italia Item Checker | Path of Exile 2",
@@ -47,7 +46,6 @@ export default function RootLayout({
     <html lang="en" className="dark">
       <body className={`${GeistSans.variable} ${GeistMono.variable} antialiased`}>
         {children}
-        <Analytics mode="production" debug={false} />
       </body>
     </html>
   );

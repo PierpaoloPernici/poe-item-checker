@@ -1,9 +1,16 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import ReactGA from 'react-ga4';
 import ItemChecker from '@/app/components/ItemChecker';
 import LeagueSelector from '@/app/components/LeagueSelector';
 export default function Home() {
   const [selectedLeague, setSelectedLeague] = useState('Standard');
+
+  useEffect(() => {
+    ReactGA.initialize(process.env.NEXT_PUBLIC_GA_TRACKING_ID || 'G-XXXXXXXXXX'); // Replace with your tracking ID
+    ReactGA.send({ hitType: "pageview", page: window.location.pathname + window.location.search });
+  }, []);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-950 to-slate-900 p-8">
       <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))] opacity-20" />
