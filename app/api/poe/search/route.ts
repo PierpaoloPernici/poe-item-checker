@@ -1,24 +1,93 @@
 import { NextResponse } from 'next/server';
 
-// Rate limiting state
-interface RateLimitState {
+interface RateLimitTier {
   hits: number;
+  max: number;
   period: number;
-  restricted: number;
+}
+
+interface RateLimitState {
+  tiers: RateLimitTier[];
   lastReset: number;
 }
 
 let rateLimitState: RateLimitState = {
-  hits: 0,
-  period: 5,
-  restricted: 0,
+  tiers: [
+    { hits: 0, max: 5, period: 10 },    // 5 requests per 10 seconds
+    { hits: 0, max: 15, period: 60 },   // 15 requests per 60 seconds
+    { hits: 0, max: 30, period: 300 },  // 30 requests per 300 seconds
+  ],
   lastReset: Date.now()
 };
 
+// Get the base URL for POE API requests
+function getBaseUrl(): string {
+  return process.env.POE_PROXY_URL || 'https://www.pathofexile.com';
+}
+
+function getRateLimitStatus(): string {
+  return rateLimitState.tiers.map((tier, index) => {
+    const remaining = tier.max - tier.hits;
+    const period = tier.period;
+    const timeLeft = Math.max(0, Math.ceil((rateLimitState.lastReset + period * 1000 - Date.now()) / 1000));
+    return `Tier ${index + 1}: ${remaining}/${tier.max} requests remaining (resets in ${timeLeft}s)`;
+  }).join(' | ');
+}
+
+function checkRateLimit(): { allowed: boolean; timeToWait?: number } {
+  const now = Date.now();
+
+  // Reset counters if enough time has passed
+  rateLimitState.tiers.forEach((tier, index) => {
+    if (now - rateLimitState.lastReset >= tier.period * 1000) {
+      tier.hits = 0;
+    }
+  });
+
+  // Check if any tier would be exceeded
+  for (const tier of rateLimitState.tiers) {
+    if (tier.hits >= tier.max) {
+      const timeToWait = Math.ceil(
+        (rateLimitState.lastReset + tier.period * 1000 - now) / 1000
+      );
+      return { allowed: false, timeToWait };
+    }
+  }
+
+  return { allowed: true };
+}
+
+function updateRateLimits(headers: Headers) {
+  const ipState = headers.get('x-rate-limit-ip-state')?.split(',') || [];
+
+  ipState.forEach((state, index) => {
+    const [hits] = state.split(':').map(Number);
+    if (rateLimitState.tiers[index]) {
+      rateLimitState.tiers[index].hits = hits;
+    }
+  });
+
+  rateLimitState.lastReset = Date.now();
+  console.log(`[Rate Limits] ${getRateLimitStatus()}`);
+}
+
 export async function POST(request: Request) {
   try {
+    // Check rate limit before making the request
+    const rateLimitCheck = checkRateLimit();
+    if (!rateLimitCheck.allowed) {
+      console.log(`[Rate Limits] Request blocked - ${getRateLimitStatus()}`);
+      return NextResponse.json({
+        error: 'Rate limit exceeded',
+        details: `Please wait ${rateLimitCheck.timeToWait} seconds before trying again`,
+        retryAfter: rateLimitCheck.timeToWait,
+        rateLimitStatus: getRateLimitStatus()
+      }, { status: 429 });
+    }
+
     const body = await request.json();
-    const response = await fetch(`https://www.pathofexile.com/api/trade2/search/${body.league}`, {
+    const baseUrl = getBaseUrl();
+    const response = await fetch(`${baseUrl}/api/trade2/search/${body.league}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -28,23 +97,8 @@ export async function POST(request: Request) {
       body: JSON.stringify(body.query),
     });
 
-    // Parse rate limit headers
-    const policy = response.headers.get('X-Rate-Limit-Policy');
-    const rules = response.headers.get('X-Rate-Limit-Rules')?.split(',') || [];
-
-    rules.forEach(rule => {
-      const limit = response.headers.get(`X-Rate-Limit-${rule}`)?.split(':').map(Number);
-      const state = response.headers.get(`X-Rate-Limit-${rule}-State`)?.split(':').map(Number);
-
-      if (limit && state) {
-        rateLimitState = {
-          hits: state[0],
-          period: limit[1],
-          restricted: state[2],
-          lastReset: Date.now()
-        };
-      }
-    });
+    // Update rate limits from response headers
+    updateRateLimits(response.headers);
 
     if (!response.ok) {
       if (response.status === 429) {
