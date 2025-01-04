@@ -78,19 +78,26 @@ function normalizeStatText(text: string): string {
     .replace(/^adds /, '')
     .replace(/^gain /, '')
     .replace(/^you /, '')
+    .replace(/\s*\(implicit\)$/, '')
     .trim();
 }
 
-export function findStatId(statText: string, _stats: StatOption[]): string | null {
+export function findStatId(statText: string): string | null {
   if (!statsCache || !fuseInstance) {
     console.error('Stats cache or Fuse instance not initialized');
     return null;
   }
 
   const normalizedInput = normalizeStatText(statText);
+  const searchInImplicitOnly = statText.toLowerCase().includes('implicit');
+
+  // Se dobbiamo cercare solo nelle statistiche implicit, filtriamo il cache
+  const relevantStats = searchInImplicitOnly
+    ? statsCache.filter(s => s.type === 'Implicit')
+    : statsCache;
 
   // First try exact match after normalization
-  const exactMatch = statsCache.find(s =>
+  const exactMatch = relevantStats.find(s =>
     normalizeStatText(s.text) === normalizedInput
   );
 
@@ -103,7 +110,28 @@ export function findStatId(statText: string, _stats: StatOption[]): string | nul
     return exactMatch.id;
   }
 
-  const results = fuseInstance.search(normalizedInput);
+  // Se stiamo cercando solo nelle implicit, creiamo una nuova istanza di Fuse
+  // con solo le statistiche implicit
+  const searchInstance = searchInImplicitOnly
+    ? new Fuse(relevantStats, {
+        keys: ['text'],
+        includeScore: true,
+        threshold: 0.7,
+        distance: 300,
+        ignoreLocation: true,
+        minMatchCharLength: 2,
+        useExtendedSearch: true,
+        getFn: (obj, path) => {
+          const value = obj[path as keyof StatOption];
+          if (path === 'text') {
+            return normalizeStatText(value as string);
+          }
+          return value ? String(value) : '';
+        }
+      })
+    : fuseInstance;
+
+  const results = searchInstance.search(normalizedInput);
 
   if (results.length > 0 && results[0].score && results[0].score < 0.8) {
     return results[0].item.id;
