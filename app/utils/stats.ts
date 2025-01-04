@@ -82,7 +82,7 @@ function normalizeStatText(text: string): string {
     .trim();
 }
 
-export function findStatId(statText: string): string | null {
+export function findStatId(statText: string, _stats: StatOption[]): string | null {
   if (!statsCache || !fuseInstance) {
     console.error('Stats cache or Fuse instance not initialized');
     return null;
