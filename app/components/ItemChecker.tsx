@@ -79,7 +79,7 @@ export default function ItemChecker({ league }: ItemCheckerProps) {
 
   const handleSearch = async () => {
     if (!itemText.trim()) {
-      setError('Please paste an item first');
+      setError('Devi prima incollare un item');
       return;
     }
 
