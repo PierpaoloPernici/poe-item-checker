@@ -84,8 +84,12 @@ function normalizeStatText(text: string): string {
 
 export function findStatId(statText: string, _stats: StatOption[]): string | null {
   if (!statsCache || !fuseInstance) {
-    console.error('Stats cache or Fuse instance not initialized');
-    return null;
+    console.error('Stats cache or Fuse instance not initialized, using provided stats');
+    const normalizedInput = normalizeStatText(statText);
+    const exactMatch = _stats.find(s =>
+      normalizeStatText(s.text) === normalizedInput
+    );
+    return exactMatch?.id || null;
   }
 
   const normalizedInput = normalizeStatText(statText);

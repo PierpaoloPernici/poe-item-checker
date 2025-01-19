@@ -11,7 +11,7 @@ interface RateLimitState {
   lastReset: number;
 }
 
-let rateLimitState: RateLimitState = {
+const rateLimitState: RateLimitState = {
   tiers: [
     { hits: 0, max: 5, period: 10 },    // 5 requests per 10 seconds
     { hits: 0, max: 15, period: 60 },   // 15 requests per 60 seconds
@@ -38,7 +38,7 @@ function checkRateLimit(): { allowed: boolean; timeToWait?: number } {
   const now = Date.now();
 
   // Reset counters if enough time has passed
-  rateLimitState.tiers.forEach((tier, index) => {
+  rateLimitState.tiers.forEach((tier) => {
     if (now - rateLimitState.lastReset >= tier.period * 1000) {
       tier.hits = 0;
     }

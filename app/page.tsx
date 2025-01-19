@@ -185,11 +185,11 @@ export default function Home() {
               </li>
               <li className="flex items-center gap-2">
                 <span className="text-cyan-400">3.</span>
-                Attiva o disattiva se vuoi includere il livello dell'oggetto nella ricerca
+                Attiva o disattiva se vuoi includere il livello dell&apos;oggetto nella ricerca
               </li>
               <li className="flex items-center gap-2">
                 <span className="text-cyan-400">4.</span>
-                Clicca su "Cerca su PoE Trade" per aprire il sito ufficiale di scambio
+                Clicca su &quot;Cerca su PoE Trade&quot; per aprire il sito ufficiale di scambio
               </li>
             </ol>
           </div>

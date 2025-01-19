@@ -35,7 +35,7 @@ export default function ItemChecker({ league }: ItemCheckerProps) {
     const lines = text.split('\n').map(line => line.trim()).filter(Boolean);
     let itemClass: string | undefined;
     let itemLevel: number | undefined;
-    let stats: string[] = [];
+    const stats: string[] = [];
     let rarity: string | undefined;
     let name: string | undefined;
     let baseType: string | undefined;
