@@ -14,7 +14,7 @@ export const ITEM_CLASS_MAP: Record<string, string> = {
   'Daggers': 'weapon.dagger',
   'Rune Daggers': 'weapon.runedagger',
   'Warstaves': 'weapon.warstaff',
-  "Quartestaves": 'weapon.warstaff',
+  "Quarterstaves": 'weapon.warstaff',
   'Body Armours': 'armour.chest',
   'Boots': 'armour.boots',
   'Gloves': 'armour.gloves',
