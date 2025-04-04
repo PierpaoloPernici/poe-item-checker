@@ -215,7 +215,12 @@ export default function ItemChecker({ league }: ItemCheckerProps) {
           label: league,
           value: parsedItem.itemLevel || 0
         });
-        window.open(`https://www.pathofexile.com/trade2/search/${league}/${data.id}`, '_blank');
+        const tradeUrl = `https://www.pathofexile.com/trade2/search/${league}/${data.id}`;
+        const newWindow = window.open(tradeUrl, '_blank');
+        if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
+          setError('Popup was blocked. Please allow popups for this site and try again.');
+          console.log('Trade URL:', tradeUrl);
+        }
       } else {
         throw new Error('Nessun ID di ricerca restituito');
       }

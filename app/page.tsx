@@ -141,7 +141,7 @@ function CookieBanner() {
 }
 
 export default function Home() {
-  const [selectedLeague, setSelectedLeague] = useState('Standard');
+  const [selectedLeague, setSelectedLeague] = useState('Dawn of the Hunt');
 
   useEffect(() => {
     const hasConsent = localStorage.getItem('cookieConsent');

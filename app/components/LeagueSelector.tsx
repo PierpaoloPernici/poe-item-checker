@@ -19,8 +19,10 @@ export default function LeagueSelector({ selectedLeague, onLeagueChange }: Leagu
                  focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/50
                  transition-all duration-200"
       >
+        <option value="Dawn of the Hunt">Dawn of the Hunt</option>
+        <option value="HC Dawn of the Hunt">HC Dawn of the Hunt</option>
         <option value="Standard">Standard</option>
       </select>
     </div>
   );
-} 
+}
