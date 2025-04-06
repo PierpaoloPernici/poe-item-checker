@@ -146,8 +146,6 @@ export function findStatId(statText: string, _stats: StatOption[]): string | nul
 
 export function extractValue(statText: string): number {
   const matches = statText.match(/([+-]?\d+\.?\d*)/g);
-  if (!matches || matches.length < 2) return 0;
-  const min = parseFloat(matches[0]);
-  const max = parseFloat(matches[1]);
-  return (min + max) / 2;
+  if (!matches) return 0;
+  return parseFloat(matches[0]);
 }
