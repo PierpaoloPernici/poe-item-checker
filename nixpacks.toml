@@ -1,4 +1,4 @@
-[phases.setup]
+phases.setup]
 nixPkgs = ['nodejs', 'pnpm']
 
 [phases.install]
@@ -8,8 +8,9 @@ cmds = ['pnpm install']
 cmds = ['pnpm build']
 
 [start]
-cmd = 'pnpm start'
+cmd = 'pnpm run update-cache && pnpm start'
 
 [variables]
 NODE_ENV = 'production'
 NEXT_TELEMETRY_DISABLED = '1'
+PORT = '3000'
