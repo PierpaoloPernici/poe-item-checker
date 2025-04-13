@@ -2,10 +2,13 @@
 nixPkgs = ['nodejs', 'pnpm']
 
 [phases.install]
-cmds = ['pnpm install']
+cmds = ['pnpm install --frozen-lockfile --prod=false']
 
 [phases.build]
-cmds = ['pnpm build']
+cmds = ['pnpm run build']
+
+[phases.setup-production]
+cmds = ['pnpm prune --prod']
 
 [start]
 cmd = 'pnpm run update-cache && pnpm start'
@@ -14,3 +17,4 @@ cmd = 'pnpm run update-cache && pnpm start'
 NODE_ENV = 'production'
 NEXT_TELEMETRY_DISABLED = '1'
 PORT = '3000'
+HOST = '0.0.0.0'
