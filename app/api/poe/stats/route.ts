@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import fs from 'fs/promises';
 import path from 'path';
 
-const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24h
+const CACHE_DURATION = 24 * 60 * 60; // 24h in seconds
 
 async function readCache() {
   try {
@@ -20,10 +20,15 @@ export async function GET() {
     const cache = await readCache();
     const now = new Date().getTime();
 
-    if (cache && cache.lastUpdated) {
+    if (cache?.lastUpdated && cache.data) {
       const cacheAge = now - new Date(cache.lastUpdated).getTime();
-      if (cacheAge < CACHE_DURATION) {
-        return NextResponse.json(cache.data);
+      const headers = {
+        'Cache-Control': `public, max-age=${CACHE_DURATION}`,
+        'Content-Type': 'application/json',
+      };
+
+      if (cacheAge < CACHE_DURATION * 1000) {
+        return NextResponse.json(cache.data, { headers });
       }
     }
 
@@ -35,18 +40,33 @@ export async function GET() {
     });
 
     if (!response.ok) {
-      // If API call fails and we have cache, use it regardless of age
-      if (cache && cache.data) {
+      if (cache?.data) {
         console.log('Using expired cache due to API failure');
-        return NextResponse.json(cache.data);
+        return NextResponse.json(cache.data, {
+          headers: {
+            'Cache-Control': 'public, max-age=3600',
+            'Content-Type': 'application/json',
+          },
+        });
       }
       throw new Error(`Failed to fetch stats: ${response.status} ${response.statusText}`);
     }
 
     const data = await response.json();
-    return NextResponse.json(data);
+    return NextResponse.json(data, {
+      headers: {
+        'Cache-Control': `public, max-age=${CACHE_DURATION}`,
+        'Content-Type': 'application/json',
+      },
+    });
   } catch (error) {
     console.error('Error fetching PoE stats:', error);
-    return NextResponse.json({ error: 'Failed to fetch stats' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to fetch stats' }, {
+      status: 500,
+      headers: {
+        'Cache-Control': 'no-store',
+        'Content-Type': 'application/json',
+      },
+    });
   }
 }
